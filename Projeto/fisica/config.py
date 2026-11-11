@@ -26,8 +26,10 @@ ALTURA_CAIXA = 10
 
 # calcula velocidade do fogute na orbita v = √(μ / r) 
 
-def velocidade_orbital(MI, r):
-    return np.sqrt (MI / r)
+def velocidade_orbital(mi, r):
+    return np.sqrt (mi / r)
+
+# printa os dados do arquivo, caso o mesmo tenha sido requisitado
 
 if __name__ == "__main__":
-    print("%.2f" % velocidade_orbital(MI, 100))
+    print("%.2f" % velocidade_orbital(mi, 100))
