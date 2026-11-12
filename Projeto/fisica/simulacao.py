@@ -9,6 +9,8 @@ def aceleracao_gravitacional(foguete, planeta):
     modulo_de_r = np.linalg.norm(r)
     return -planeta["mi"] * r / modulo_de_r ** 3
 
+# calcula a movimentacao do foguete, com sua velocidade e posicao, de acordo com um planeta e variacao com o tempo
+
 def movimenta_foguete(foguete, planeta, dt):
     a = aceleracao_gravitacional(foguete, planeta)
     foguete["velocidade"] = foguete["velocidade"] + a * dt
