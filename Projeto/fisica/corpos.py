@@ -12,7 +12,7 @@ planeta = {
 # dicionario de foguete, usando sua posicao inicial, velocidade, angulo e combustivel utilizado
 
 foguete = {
-    "posicao": np.array([100.0, 0, 0 ,0]),
+    "posicao": np.array([100.0 , 0.0]),
     "velocidade": np.array([0.0, velocidade_orbital(planeta["mi"], 100)]),
     "angulo": 0.0,
     "combustivel": 100.0,

@@ -10,7 +10,7 @@ RAIO_PLANETA = 30
 
 # medida em mm
 
-POSICAO_PLANETA = (0,0,0,0)
+POSICAO_PLANETA = (0.0 , 0.0)
 
 # medida em seg
 
