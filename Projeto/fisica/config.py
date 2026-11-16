@@ -46,6 +46,9 @@ ANGULO_INICIAL = 0.0
 # medida em mm
 POSICAO_INICIAL = [100.0 , 0.0]
 
+# medida em mm
+TOLERANCIA_ALVO = 20.0
+
 
 # calcula velocidade do fogute na orbita v = √(μ / r) 
 

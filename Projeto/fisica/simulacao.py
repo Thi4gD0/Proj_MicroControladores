@@ -1,6 +1,6 @@
 import numpy as np
 from fisica.corpos import planeta, foguete
-from fisica.config import DELTA_T
+from fisica.config import DELTA_T, ALTURA_CAIXA, LARGURA_CAIXA
 
 # calcula a aceleracao que a gravidade de um planeta gera no foguete e na posicao atual que ele esta
 
@@ -17,6 +17,14 @@ def movimenta_foguete(foguete, planeta, dt):
     foguete["posicao"] = foguete["posicao"] + foguete["velocidade"] * dt
     return foguete
 
+
+def dentro_do_limite(posicao):
+    x = posicao[0]
+    y = posicao[1]
+    metade_largura = LARGURA_CAIXA / 2
+    metade_altura = ALTURA_CAIXA / 2
+
+    return (-metade_largura <= x <= metade_largura) and (-metade_altura <= y <= metade_altura)
 
 if __name__ == "__main__":
     print(aceleracao_gravitacional(foguete, planeta))
