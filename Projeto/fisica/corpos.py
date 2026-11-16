@@ -1,24 +1,41 @@
 import numpy as np
-from fisica.config import MI, RAIO_PLANETA, POSICAO_PLANETA, velocidade_orbital
+from fisica.config import (GRAVIDADE_PLANETA, RAIO_PLANETA, POSICAO_PLANETA, 
+                           MASSA_FOGUETE, FORCA_MAX, COMBUSTIVEL_MAX, 
+                           CONSUMO_MAX, ANGULO_INICIAL, POSICAO_INICIAL, 
+                           velocidade_orbital)
 
-# dicionario de planetas, usando sua posicao inicial, raio e a constante mi, baseado nas constantes do arquivo, config.py
+# funcao que cria um dicionario de planetas, usando sua posicao inicial, raio 
+# e a calcula a constante mi, baseado na constante gravidade que esta no arquivo, config.py
 
-planeta = {
-    "posicao": POSICAO_PLANETA,
-    "raio": RAIO_PLANETA,
-    "mi": MI,
-}
+def cria_planeta(posicao, raio, gravidade):
+    mi = gravidade * raio**2
+    novo_planeta = {
+        "posicao": posicao,
+        "raio": raio,
+        "mi": mi,
+    }
+    return novo_planeta
 
-# dicionario de foguete, usando sua posicao inicial, velocidade, angulo e combustivel utilizado
+# funcao que cria um dicionario de foguete
 
-foguete = {
-    "posicao": np.array([100.0 , 0.0]),
-    "velocidade": np.array([0.0, velocidade_orbital(planeta["mi"], 100)]),
-    "angulo": 0.0,
-    "combustivel": 100.0,
-}
+def cria_foguete(posicao, velocidade):
+    novo_foguete = {
+        "posicao": np.array(posicao, dtype=float),
+        "velocidade": np.array(velocidade, dtype=float),
+        "angulo": ANGULO_INICIAL,
+        "combustivel": COMBUSTIVEL_MAX,
+        "massa": MASSA_FOGUETE,
+        "forca_max": FORCA_MAX,
+        "consumo_max": CONSUMO_MAX, 
+    }
+    return novo_foguete
+
+# Variaveis / Chamadas
+
+planeta = cria_planeta(POSICAO_PLANETA,RAIO_PLANETA, GRAVIDADE_PLANETA)
+foguete = cria_foguete(POSICAO_INICIAL, velocidade=[0.0 , velocidade_orbital(planeta["mi"] , 100.0)])
 
 if __name__ == "__main__":
-    print(planeta["raio"])
+    pr
     print(foguete["posicao"])
     print(foguete["velocidade"])
