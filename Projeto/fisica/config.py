@@ -5,7 +5,7 @@ import numpy as np
 RAIO_PLANETA = 30
 
 # medida em mm
-POSICAO_PLANETA = [(0.0 , 0.0)]
+POSICAO_PLANETA = [0.0 , 0.0]
 
 # medida em mm por segundo ao quadrado
 GRAVIDADE_PLANETA = 438.67

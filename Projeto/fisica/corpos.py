@@ -10,7 +10,7 @@ from fisica.config import (GRAVIDADE_PLANETA, RAIO_PLANETA, POSICAO_PLANETA,
 def cria_planeta(posicao, raio, gravidade):
     mi = gravidade * raio**2
     novo_planeta = {
-        "posicao": posicao,
+        "posicao": np.array(posicao, dtype=float),
         "raio": raio,
         "mi": mi,
     }
