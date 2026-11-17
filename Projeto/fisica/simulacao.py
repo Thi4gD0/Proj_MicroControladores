@@ -1,6 +1,7 @@
 import numpy as np
 from fisica.corpos import planeta, foguete, alvo, cria_foguete
-from fisica.config import DELTA_T, ALTURA_CAIXA, LARGURA_CAIXA
+from fisica.config import (DELTA_T, ALTURA_CAIXA, LARGURA_CAIXA, 
+                           VELOCIDADE_GIRO, POSICAO_INICIAL)
 
 # calcula a aceleracao que a gravidade de um planeta gera no foguete e na posicao atual que ele esta
 
@@ -65,10 +66,31 @@ def valida_parametros(foguete, planeta, alvo):
     
     return None
 
+# aplica os comando vindos do usuario e calcula consumo de combustivel, potencia e angulo da nave
+
+def aplica_comando(foguete, comando, dt):
+    if "angulo" in comando:
+        foguete["angulo"] = comando["angulo"]
+
+    elif "girar" in comando:
+        foguete["angulo"] = foguete["angulo"] + comando["girar"] * VELOCIDADE_GIRO * dt
+
+    foguete["combustivel"] = max(0 , foguete["combustivel"] - foguete["consumo_max"] * comando["acelerador"] * dt)
+
+    if foguete["combustivel"] > 0:
+        intensidade = foguete["forca_max"] * comando["acelerador"]/foguete["massa"]
+        direcao = np.array([np.cos(foguete["angulo"]) , np.sin(foguete["angulo"])])
+        return intensidade * direcao
+    return np.array([0.0 , 0.0])
+
 if __name__ == "__main__":
     print(valida_parametros(foguete, planeta, alvo))
     print(valida_parametros(cria_foguete([10.0 , 0.0] , [0.0 , 0.0]), planeta, alvo))
     print(valida_parametros(cria_foguete([500.0 , 0.0] , [0.0 , 0.0]), planeta, alvo))
+
+    foguete_teste = cria_foguete(POSICAO_INICIAL, [0.0, 0.0])
+    print(aplica_comando(foguete_teste, {"girar": 0, "acelerador": 1}, DELTA_T))
+    print(foguete_teste["combustivel"])
 
     print(aceleracao_gravitacional(foguete, planeta))
     print(movimenta_foguete(foguete, planeta, DELTA_T))

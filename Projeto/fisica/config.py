@@ -38,7 +38,7 @@ FORCA_MAX = 0.3
 COMBUSTIVEL_MAX = 100.0
 
 # medida em rad por segundo
-VELOCIDA_GIRO = np.pi / 2
+VELOCIDADE_GIRO = np.pi / 2
 
 # medida em rad
 ANGULO_INICIAL = 0.0
