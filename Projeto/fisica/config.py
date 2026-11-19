@@ -50,6 +50,10 @@ POSICAO_INICIAL = [100.0 , 0.0]
 TOLERANCIA_ALVO = 20.0
 
 
+# --Animacao-- #
+# medida em segundos por quadros
+PASSOS_POR_QUADROS = 10
+
 # calcula velocidade do fogute na orbita v = √(μ / r) 
 
 def velocidade_orbital(mi, r):
