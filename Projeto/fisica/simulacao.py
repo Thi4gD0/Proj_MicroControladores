@@ -12,12 +12,13 @@ def aceleracao_gravitacional(foguete, planeta):
 
 # calcula a movimentacao do foguete, com sua velocidade e posicao, de acordo com um planeta e variacao com o tempo
 
-def movimenta_foguete(foguete, planeta, dt):
+def movimenta_foguete(foguete, planeta, dt, comando=None):
     a = aceleracao_gravitacional(foguete, planeta)
+    if (comando is not None):
+        a = a + aplica_comando(foguete, comando, dt)
     foguete["velocidade"] = foguete["velocidade"] + a * dt
     foguete["posicao"] = foguete["posicao"] + foguete["velocidade"] * dt
     return foguete
-
 
 # calcula a area limite usada na simulacao, baseada na altura e larrgura da caixa
 
@@ -91,6 +92,12 @@ if __name__ == "__main__":
     foguete_teste = cria_foguete(POSICAO_INICIAL, [0.0, 0.0])
     print(aplica_comando(foguete_teste, {"girar": 0, "acelerador": 1}, DELTA_T))
     print(foguete_teste["combustivel"])
+
+    f1 = cria_foguete(POSICAO_INICIAL, [0.0, 62.83])
+    f2 = cria_foguete(POSICAO_INICIAL, [0.0, 62.83])
+    movimenta_foguete(f1, planeta, DELTA_T)
+    movimenta_foguete(f2, planeta, DELTA_T, {"angulo": np.pi / 2, "acelerador": 1})
+    print(f1["velocidade"], f2["velocidade"], f2["combustivel"])
 
     print(aceleracao_gravitacional(foguete, planeta))
     print(movimenta_foguete(foguete, planeta, DELTA_T))
