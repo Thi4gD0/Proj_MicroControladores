@@ -1,7 +1,8 @@
 import numpy as np
 from fisica.corpos import planeta, foguete, alvo, cria_foguete
 from fisica.config import (DELTA_T, ALTURA_CAIXA, LARGURA_CAIXA, 
-                           VELOCIDADE_GIRO, POSICAO_INICIAL)
+                           VELOCIDADE_GIRO, POSICAO_INICIAL,
+                           COMBUSTIVEL_MAX)
 
 # calcula a aceleracao que a gravidade de um planeta gera no foguete e na posicao atual que ele esta
 
@@ -104,29 +105,62 @@ def verifica_eventos(foguete, planeta, alvo):
 
     return "voando"
 
+# executa um passo completo da simulacao: aplica o comando, move o foguete,
+# verifica os eventos e devolve o estado atual para a interface
+
+def passo_simulacao(foguete, planeta, alvo, comando=None):
+    movimenta_foguete(foguete, planeta, DELTA_T, comando)
+    evento = verifica_eventos(foguete, planeta, alvo)
+
+    estado = {
+        "posicao": foguete["posicao"],
+        "velocidade": foguete["velocidade"],
+        "angulo": foguete["angulo"],
+        "combustivel": foguete["combustivel"] / COMBUSTIVEL_MAX * 100,
+        "evento": evento,
+    }
+    return estado
+
 if __name__ == "__main__":
-    print(valida_parametros(foguete, planeta, alvo))
-    print(valida_parametros(cria_foguete([10.0 , 0.0] , [0.0 , 0.0]), planeta, alvo))
-    print(valida_parametros(cria_foguete([500.0 , 0.0] , [0.0 , 0.0]), planeta, alvo))
 
-    foguete_teste = cria_foguete(POSICAO_INICIAL, [0.0, 0.0])
-    print(aplica_comando(foguete_teste, {"girar": 0, "acelerador": 1}, DELTA_T))
-    print(foguete_teste["combustivel"])
+    print("--- VALIDACAO ---")
+    print("Exemplos padrao (esperado None):", valida_parametros(foguete, planeta, alvo))
+    print("Dentro do planeta (esperado erro):", valida_parametros(cria_foguete([10.0, 0.0], [0.0, 0.0]), planeta, alvo))
+    print("Fora da caixa (esperado erro):", valida_parametros(cria_foguete([500.0, 0.0], [0.0, 0.0]), planeta, alvo))
 
-    f1 = cria_foguete(POSICAO_INICIAL, [0.0, 62.83])
-    f2 = cria_foguete(POSICAO_INICIAL, [0.0, 62.83])
-    movimenta_foguete(f1, planeta, DELTA_T)
-    movimenta_foguete(f2, planeta, DELTA_T, {"angulo": np.pi / 2, "acelerador": 1})
-    print(f1["velocidade"], f2["velocidade"], f2["combustivel"])
+    print("--- GRAVIDADE E MOTOR ---")
+    f = cria_foguete(POSICAO_INICIAL, [0.0, 0.0])
+    print("Gravidade (esperado [-39.48 0]):", aceleracao_gravitacional(f, planeta))
+    print("Motor (esperado [10 0]):", aplica_comando(f, {"girar": 0, "acelerador": 1}, DELTA_T))
+    print("Combustivel (esperado 99.95):", f["combustivel"])
 
-    print(aceleracao_gravitacional(foguete, planeta))
-    print(movimenta_foguete(foguete, planeta, DELTA_T))
+    f = cria_foguete(POSICAO_INICIAL, [0.0, 62.83])
+    movimenta_foguete(f, planeta, DELTA_T, {"angulo": np.pi / 2, "acelerador": 1})
+    print("Motor + gravidade (esperado [-0.39 62.93]):", f["velocidade"])
 
-    print(verifica_eventos(cria_foguete(POSICAO_INICIAL, [0.0, 0.0]), planeta, alvo))
-    print(verifica_eventos(cria_foguete([10.0, 0.0], [0.0, 0.0]), planeta, alvo))
-    print(verifica_eventos(cria_foguete([500.0, 0.0], [0.0, 0.0]), planeta, alvo))
-    print(verifica_eventos(cria_foguete(alvo["posicao"], [0.0, 0.0]), planeta, alvo))
+    print("--- EVENTOS ---")
+    print("Esperado voando:", verifica_eventos(cria_foguete(POSICAO_INICIAL, [0.0, 0.0]), planeta, alvo))
+    print("Esperado colisao:", verifica_eventos(cria_foguete([10.0, 0.0], [0.0, 0.0]), planeta, alvo))
+    print("Esperado fora_da_caixa:", verifica_eventos(cria_foguete([500.0, 0.0], [0.0, 0.0]), planeta, alvo))
+    print("Esperado alvo_atingido:", verifica_eventos(cria_foguete(alvo["posicao"], [0.0, 0.0]), planeta, alvo))
 
     f = cria_foguete(POSICAO_INICIAL, [0.0, 0.0])
     f["combustivel"] = 0
-    print(verifica_eventos(f, planeta, alvo))
+    print("Esperado sem_combustivel:", verifica_eventos(f, planeta, alvo))
+
+    print("--- PARTIDA (motor ligado por 2 s) ---")
+    f = cria_foguete(POSICAO_INICIAL, [0.0, 62.83])
+    for i in range(3000):
+        if i < 200:
+            comando = {"angulo": np.pi / 2, "acelerador": 1}
+        else:
+            comando = {"angulo": np.pi / 2, "acelerador": 0}
+
+        estado = passo_simulacao(f, planeta, alvo, comando)
+
+        if (i + 1) % 100 == 0:
+            print("%.1f s  combustivel %.1f%%  evento %s" % ((i + 1) * DELTA_T, estado["combustivel"], estado["evento"]))
+
+        if estado["evento"] in ("colisao", "fora_da_caixa", "alvo_atingido"):
+            print("Fim:", estado["evento"])
+            break
