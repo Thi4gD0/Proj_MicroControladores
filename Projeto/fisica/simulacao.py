@@ -84,6 +84,26 @@ def aplica_comando(foguete, comando, dt):
         return intensidade * direcao
     return np.array([0.0 , 0.0])
 
+# verifica o estado do foguete a cada passo: colisao, saida da caixa, alvo atingido ou sem combustivel
+
+def verifica_eventos(foguete, planeta, alvo):
+    distancia_planeta = np.linalg.norm(foguete["posicao"] - planeta["posicao"])
+    distancia_alvo = np.linalg.norm(foguete["posicao"] - alvo["posicao"])
+
+    if distancia_planeta <= planeta["raio"]:
+        return "colisao"
+
+    if not dentro_do_limite(foguete["posicao"]):
+        return "fora_da_caixa"
+
+    if distancia_alvo <= alvo["tolerancia"]:
+        return "alvo_atingido"
+
+    if foguete["combustivel"] == 0:
+        return "sem_combustivel"
+
+    return "voando"
+
 if __name__ == "__main__":
     print(valida_parametros(foguete, planeta, alvo))
     print(valida_parametros(cria_foguete([10.0 , 0.0] , [0.0 , 0.0]), planeta, alvo))
@@ -101,3 +121,12 @@ if __name__ == "__main__":
 
     print(aceleracao_gravitacional(foguete, planeta))
     print(movimenta_foguete(foguete, planeta, DELTA_T))
+
+    print(verifica_eventos(cria_foguete(POSICAO_INICIAL, [0.0, 0.0]), planeta, alvo))
+    print(verifica_eventos(cria_foguete([10.0, 0.0], [0.0, 0.0]), planeta, alvo))
+    print(verifica_eventos(cria_foguete([500.0, 0.0], [0.0, 0.0]), planeta, alvo))
+    print(verifica_eventos(cria_foguete(alvo["posicao"], [0.0, 0.0]), planeta, alvo))
+
+    f = cria_foguete(POSICAO_INICIAL, [0.0, 0.0])
+    f["combustivel"] = 0
+    print(verifica_eventos(f, planeta, alvo))
