@@ -62,5 +62,5 @@ def atualiza(quadro):
     return ponto_foguete, linha_rastro, texto
 
 animacao = FuncAnimation(fig, atualiza, frames=300, interval=50)
-animacao.save("alvo_atingido.gif", writer="pillow", fps=20)
+animacao.save("simulacao.gif", writer="pillow", fps=20)
 print("GIF salvo: simulacao.gif")

@@ -21,7 +21,7 @@ DELTA_T = 0.01
 LARGURA_CAIXA = 400.0
 
 # medida em mm
-ALTURA_CAIXA = 300.0
+ALTURA_CAIXA = 800.0
 
 
 # --Nave-- #
@@ -53,6 +53,21 @@ TOLERANCIA_ALVO = 20.0
 # --Animacao-- #
 # medida em segundos por quadros
 PASSOS_POR_QUADROS = 10
+
+
+# --Comunicacao Serial-- #
+# endereco da porta do arduino
+PORTA_SERIAL = "/dev/ttyUSB0"
+
+# velocidade da conversa em bits por segundo
+BAUD_RATE = 115200
+
+# Liga ou desliga os teste
+MODO_TESTE = True
+
+# define a cada quantos passos do calculo da fisica 
+# um passo vai para cnc
+PASSOS_POR_ENVIO = 10
 
 # calcula velocidade do fogute na orbita v = √(μ / r) 
 
