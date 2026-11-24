@@ -5,6 +5,10 @@ from fisica.simulacao import dentro_do_limite
 from fisica.config import (LARGURA_CAIXA, ALTURA_CAIXA, PORTA_SERIAL,
                            BAUD_RATE, MODO_TESTE)
 
+
+# funcao que recebe uma posicao como (x , y) e retorna 
+# as coordenadas adaptadas para os limites da cnc
+
 def posicao_para_cnc(posicao):
     if not dentro_do_limite(posicao):
         return None
@@ -13,10 +17,18 @@ def posicao_para_cnc(posicao):
     y_cnc = posicao[1] + ALTURA_CAIXA/2
     return np.array([x_cnc , y_cnc])
 
+
+# funcao que recebe a posicao adaptada para os limites da cnc
+# e transforma em uma mensagem em formato especifico que 
+# a mesma vai ler por via serial 
+
 def cria_mensagem(posicao_cnc , tempo):
     x = posicao_cnc[0]
     y = posicao_cnc[1]
     return "%.2f;%.2f;%.2f\n" % (x, y, tempo)
+
+
+# funcao que realiza a inicializacao dos comandos de Serial
 
 def inicia_conexao():
     if MODO_TESTE == True:
@@ -25,6 +37,12 @@ def inicia_conexao():
         meu_serial = Serial(PORTA_SERIAL, baudrate=BAUD_RATE, timeout=2)
         sleep(2)
         return meu_serial
+
+
+# funcao que recebe a mensagem das coordenadas ja adpatadas
+# aos limites da cnc e convertidas para mensagem no formato 
+# correto e que recebe a inicializacao da serial e envia para
+# o arduino como serial
 
 def envia_posicao(conexao, mensagem):
     if MODO_TESTE:
@@ -37,6 +55,9 @@ def envia_posicao(conexao, mensagem):
         print("Erro ao enviar coordenadas para cnc")
         return False
     return True
+
+
+# funcao que encerra a inicializacao da serial
 
 def finaliza_conexao(conexao):
     if conexao != None:
