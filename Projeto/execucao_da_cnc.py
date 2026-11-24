@@ -1,6 +1,7 @@
 import numpy as np
+from time import sleep
 from fisica.corpos import (planeta, alvo, cria_foguete)
-from fisica.config import (POSICAO_INICIAL, PASSOS_POR_ENVIO)
+from fisica.config import (POSICAO_INICIAL, PASSOS_POR_ENVIO, ESPERA_INICIAL)
 from fisica.simulacao import (valida_parametros, passo_simulacao)
 from fisica.cnc import (inicia_conexao, posicao_para_cnc, 
                         cria_mensagem, envia_posicao, finaliza_conexao)
@@ -16,6 +17,7 @@ def executa_na_cnc(foguete, planeta, alvo):
         return erro
     
     conexao = inicia_conexao()
+    primeiro_ponto = True
 
     for i in range(3000):
         comando = {"angulo": np.pi / 2 , "acelerador": 0}
@@ -28,6 +30,10 @@ def executa_na_cnc(foguete, planeta, alvo):
             mensagem = cria_mensagem(coordenadas_cnc)
             if envia_posicao(conexao , mensagem) == False:
                 break
+
+            if primeiro_ponto:
+              sleep(ESPERA_INICIAL)
+              primeiro_ponto = False
 
         if estado["evento"] in ("colisao", "fora_da_caixa", "alvo_atingido"):
             break

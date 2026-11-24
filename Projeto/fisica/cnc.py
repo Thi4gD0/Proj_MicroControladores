@@ -3,7 +3,7 @@ from serial import Serial
 from time import sleep
 from fisica.simulacao import dentro_do_limite
 from fisica.config import (LARGURA_CAIXA, ALTURA_CAIXA, PORTA_SERIAL,
-                           BAUD_RATE, MODO_TESTE)
+                           BAUD_RATE, MODO_TESTE, INTERVALO_ENVIO)
 
 
 # funcao que recebe uma posicao como (x , y) e retorna 
@@ -34,7 +34,7 @@ def inicia_conexao():
     if MODO_TESTE == True:
         return None
     else:
-        meu_serial = Serial(PORTA_SERIAL, baudrate=BAUD_RATE, timeout=10)
+        meu_serial = Serial(PORTA_SERIAL, baudrate=BAUD_RATE)
         sleep(2)
         return meu_serial
 
@@ -50,10 +50,7 @@ def envia_posicao(conexao, mensagem):
         return True
 
     conexao.write(mensagem.encode("UTF-8"))
-    result = conexao.readline().decode().strip()
-    if result != "ok":
-        print("Erro ao enviar coordenadas para cnc")
-        return False
+    sleep(INTERVALO_ENVIO)
     return True
 
 

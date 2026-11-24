@@ -69,6 +69,12 @@ MODO_TESTE = True
 # um passo vai para cnc
 PASSOS_POR_ENVIO = 10
 
+# tempo de espera em seg entre um ponto e outro
+INTERVALO_ENVIO = 0.3
+
+# tempo de espera em seg depois do primeiro ponto
+ESPERA_INICIAL = 30.0
+
 # calcula velocidade do fogute na orbita v = √(μ / r) 
 
 def velocidade_orbital(mi, r):
