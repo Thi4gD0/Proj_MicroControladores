@@ -1,13 +1,10 @@
 import numpy as np
 from fisica.corpos import (planeta, alvo, cria_foguete)
-from fisica.config import (POSICAO_INICIAL, DELTA_T, PASSOS_POR_ENVIO)
+from fisica.config import (POSICAO_INICIAL, PASSOS_POR_ENVIO)
 from fisica.simulacao import (valida_parametros, passo_simulacao)
 from fisica.cnc import (inicia_conexao, posicao_para_cnc, 
                         cria_mensagem, envia_posicao, finaliza_conexao)
 
-
-# parametros / variaveis 
-foguete = cria_foguete(POSICAO_INICIAL, [0.0 , 62.83])
 
 # funcao que executa a simulacao e envia a trajetoria do foguete para a CNC
 # um ponto a cada PASSOS_POR_ENVIO passos, ate a partida terminar
@@ -28,8 +25,7 @@ def executa_na_cnc(foguete, planeta, alvo):
             coordenadas_cnc = posicao_para_cnc(estado["posicao"])
             if coordenadas_cnc is None:
                 break
-            tempo = (i + 1) * DELTA_T
-            mensagem = cria_mensagem(coordenadas_cnc , tempo)
+            mensagem = cria_mensagem(coordenadas_cnc)
             if envia_posicao(conexao , mensagem) == False:
                 break
 

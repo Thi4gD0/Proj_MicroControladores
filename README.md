@@ -24,7 +24,8 @@ O simulador é voltado para **crianças**, por isso algumas simplificações for
 
 **Semana 3 — Integração inicial**
 - [x] Conversão das posições para as coordenadas da mesa da CNC.
-- [x] Envio dos pontos pela Serial no formato `x;y;t`, com confirmação `ok` (modo de teste).
+- [x] Envio dos pontos pela Serial no formato `x;y`, com confirmação `ok` (modo de teste).
+- [x] Protocolo combinado com o colega da CNC: formato `x;y`, baud rate 9600 e resposta `ok`.
 - [x] Função `executa_na_cnc`, pronta para ser chamada pela interface.
 - [x] Dimensões reais da área útil da CNC (400 × 800 mm).
 - [ ] Combinar o contrato de dados com a interface gráfica.
@@ -75,7 +76,7 @@ O planeta padrão foi escolhido para que uma órbita de raio 100 mm leve 10 s:
 Projeto/
 ├── validacao.py          # validação da órbita circular
 ├── animacao.py           # animação da simulação no matplotlib (substitui a CNC nos testes)
-├── simulacao_na_cnc.py   # executa a simulação e envia a trajetória para a CNC
+├── execucao_da_cnc.py    # executa a simulação e envia a trajetória para a CNC
 └── fisica/
     ├── __init__.py
     ├── config.py         # constantes do modelo + velocidade_orbital()
@@ -103,7 +104,7 @@ Projeto/
 | Alvo | `TOLERANCIA_ALVO` | 10.0 | mm |
 | Animação | `PASSOS_POR_QUADRO` | 10 | passos (0,1 s por quadro) |
 | Comunicação | `PORTA_SERIAL` | provisória | — |
-| | `BAUD_RATE` | a confirmar com o Arduino | bits/s |
+| | `BAUD_RATE` | 9600 | bits/s |
 | | `MODO_TESTE` | `True` | — |
 | | `PASSOS_POR_ENVIO` | 10 | passos (0,1 s por ponto) |
 
@@ -134,12 +135,12 @@ Projeto/
 | Função | O que faz | Retorno |
 |---|---|---|
 | `posicao_para_cnc(posicao)` | Converte a posição da física (origem no centro) para a mesa (origem no canto) | Vetor em mm, ou `None` se estiver fora da caixa |
-| `cria_mensagem(coordenadas, tempo)` | Monta o texto no formato combinado | `"x;y;t\n"` |
-| `inicia_conexao()` | Abre a Serial e espera 2 s o Arduino reiniciar | A conexão, ou `None` em modo de teste |
+| `cria_mensagem(posicao_cnc)` | Monta o texto no formato combinado | `"x;y\n"` |
+| `inicia_conexao()` | Abre a Serial (espera de até 10 s pelo `ok`) e aguarda 2 s o Arduino reiniciar | A conexão, ou `None` em modo de teste |
 | `envia_posicao(conexao, mensagem)` | Envia a mensagem e espera a confirmação | `True` se recebeu `ok`, senão `False` |
 | `finaliza_conexao(conexao)` | Fecha a Serial | — |
 
-### `simulacao_na_cnc.py` — execução na mesa
+### `execucao_da_cnc.py` — execução na mesa
 
 **`executa_na_cnc(foguete, planeta, alvo)`** valida os parâmetros, abre a conexão e roda a simulação. A cada `PASSOS_POR_ENVIO` passos (0,1 s), converte a posição, monta a mensagem e envia para a CNC. Para quando a partida termina, quando uma posição sairia da mesa ou quando o Arduino não confirma. Devolve o evento final, ou a mensagem de erro da validação.
 
@@ -179,9 +180,10 @@ x_cnc = x + LARGURA_CAIXA / 2        y_cnc = y + ALTURA_CAIXA / 2
 
 | Item | Definição |
 |---|---|
-| Mensagem | `x;y;t\n` — posição na mesa (mm) e tempo (s), com 2 casas decimais. Ex.: `300.00;400.00;0.10` |
+| Mensagem | `x;y\n` — posição na mesa (mm), com 2 casas decimais. Ex.: `300.00;400.00` |
+| Baud rate | 9600, igual nos dois lados |
 | Frequência | Um ponto a cada 0,1 s de simulação |
-| Confirmação | O Arduino responde `ok` depois de executar o movimento; só então o próximo ponto é enviado |
+| Confirmação | O Arduino responde `ok` (com `Serial.println("ok")`) depois de executar o movimento; só então o próximo ponto é enviado. O Python espera até 10 s por ponto |
 | Segurança | Posições fora da mesa não são enviadas; sem `ok`, o envio é interrompido |
 
 A sintaxe da Serial segue o padrão da disciplina (`from serial import Serial`, `write(texto.encode("UTF-8"))` e `readline().decode().strip()`).
@@ -220,7 +222,7 @@ A distância oscilou ±0,3% sem tendência: a órbita é estável.
 |---|---|---|
 | `simulacao.py` | Validação, gravidade, motor, motor + gravidade e eventos | ✅ |
 | `cnc.py` | Conversão de 5 posições (incluindo fora da mesa) e envio em modo de teste | ✅ |
-| `simulacao_na_cnc.py` | Órbita sem motor enviada ponto a ponto até `alvo_atingido` (~5 s) | ✅ |
+| `execucao_da_cnc.py` | Órbita sem motor enviada ponto a ponto até `alvo_atingido` (~5 s) | ✅ |
 
 ### Cenários na animação (`animacao.py`)
 
@@ -236,7 +238,7 @@ A distância oscilou ±0,3% sem tendência: a órbita é estável.
 
 ## ▶️ Como executar
 
-De dentro da pasta `Projeto`, com o ambiente ativado:
+Todos os arquivos são executados com `python -m`, **sempre a partir da pasta `Projeto`** e **sem** o `.py` no nome. Arquivos dentro de `fisica/` levam o prefixo `fisica.`.
 
 ```bash
 source ../.venv/bin/activate        # ativar o ambiente
@@ -244,14 +246,12 @@ pip install -r ../requirements.txt  # numpy, matplotlib, pillow e pyserial
 
 python -m fisica.simulacao          # testes da física
 python -m fisica.cnc                # testes da conversão e do envio
-python validacao.py                 # validação da órbita circular
-python animacao.py                  # gera o GIF da animação
-python simulacao_na_cnc.py          # envia a trajetória (imprime, em modo de teste)
+python -m validacao                 # validação da órbita circular
+python -m animacao                  # gera o GIF da animação
+python -m execucao_da_cnc           # envia a trajetória (imprime, em modo de teste)
 ```
 
-Arquivos dentro de `fisica/` usam `-m` e o nome com ponto (sem `.py`).
-
-**Para usar a CNC real:** rodar no computador com o Arduino conectado (o Codespaces não acessa portas USB), definir a `PORTA_SERIAL` e o `BAUD_RATE` iguais aos do Arduino, e mudar `MODO_TESTE` para `False`.
+**Para usar a CNC real:** rodar no computador com o Arduino conectado (o Codespaces não acessa portas USB), definir a `PORTA_SERIAL` e mudar `MODO_TESTE` para `False`. O Arduino deve usar `Serial.begin(9600)` e não enviar outras mensagens pela Serial além do `ok`.
 
 ---
 
@@ -260,7 +260,7 @@ Arquivos dentro de `fisica/` usam `-m` e o nome com ponto (sem `.py`).
 - Apenas um planeta (vários planetas previstos para a Semana 4).
 - Oscilação numérica de ~0,3% na distância da órbita, causada pelo passo de tempo.
 - Comunicação com a CNC testada apenas em modo de teste; falta o teste com a máquina real.
-- A confirmar com o colega da CNC: baud rate, canto da origem (0, 0) e momento da resposta `ok`.
+- A confirmar com o colega da CNC: canto da origem (0, 0) da mesa e se a velocidade da máquina permite o primeiro movimento (da origem até o ponto inicial) em menos de 10 s.
 - A massa do foguete é provisória até a peça impressa ser pesada.
 - Parâmetros (gravidade, motor e combustível) ainda não calibrados para a área real de 400 × 800 mm (Semana 4).
 

@@ -22,10 +22,10 @@ def posicao_para_cnc(posicao):
 # e transforma em uma mensagem em formato especifico que 
 # a mesma vai ler por via serial 
 
-def cria_mensagem(posicao_cnc , tempo):
+def cria_mensagem(posicao_cnc):
     x = posicao_cnc[0]
     y = posicao_cnc[1]
-    return "%.2f;%.2f;%.2f\n" % (x, y, tempo)
+    return "%.2f;%.2f\n" % (x, y)
 
 
 # funcao que realiza a inicializacao dos comandos de Serial
@@ -34,7 +34,7 @@ def inicia_conexao():
     if MODO_TESTE == True:
         return None
     else:
-        meu_serial = Serial(PORTA_SERIAL, baudrate=BAUD_RATE, timeout=2)
+        meu_serial = Serial(PORTA_SERIAL, baudrate=BAUD_RATE, timeout=10)
         sleep(2)
         return meu_serial
 
@@ -70,10 +70,10 @@ if __name__ == "__main__":
     print(posicao_para_cnc([0.0 , 500.0]))
     print(posicao_para_cnc([500.0 , 0.0]))
 
-    print(repr(cria_mensagem(np.array([300.0 , 400.0]) , 0.1)))
+    print(repr(cria_mensagem(np.array([300.0 , 400.0]))))
 
     conexao = inicia_conexao()
     posicao_cnc = posicao_para_cnc([100.0 , 0.0])
-    mensagem = cria_mensagem(posicao_cnc , 0.1)
+    mensagem = cria_mensagem(posicao_cnc)
     print(envia_posicao(conexao , mensagem))
     finaliza_conexao(conexao)
