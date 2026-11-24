@@ -60,7 +60,7 @@ PASSOS_POR_QUADROS = 10
 PORTA_SERIAL = "/dev/ttyUSB0"
 
 # velocidade da conversa em bits por segundo
-BAUD_RATE = 115200
+BAUD_RATE = 9600
 
 # Liga ou desliga os teste
 MODO_TESTE = True
