@@ -13,8 +13,8 @@ def posicao_para_cnc(posicao):
     if not dentro_do_limite(posicao):
         return None
 
-    x_cnc = posicao[0] + LARGURA_CAIXA/2
-    y_cnc = posicao[1] + ALTURA_CAIXA/2
+    x_cnc = LARGURA_CAIXA/2 - posicao[0]
+    y_cnc = ALTURA_CAIXA/2 - posicao[1] 
     return np.array([x_cnc , y_cnc])
 
 
@@ -65,12 +65,12 @@ if __name__ == "__main__":
     print(posicao_para_cnc([100.0 , 0.0]))
     print(posicao_para_cnc([-100.0 , 0.0]))
     print(posicao_para_cnc([0.0 , 500.0]))
-    print(posicao_para_cnc([500.0 , 0.0]))
+    print(posicao_para_cnc([50.0 , 50.0]))
 
     print(repr(cria_mensagem(np.array([300.0 , 400.0]))))
 
     conexao = inicia_conexao()
     posicao_cnc = posicao_para_cnc([100.0 , 0.0])
     mensagem = cria_mensagem(posicao_cnc)
-    print(envia_posicao(conexao , mensagem))
+    print(envia_posicao(conexao , "50.00;50.00\n"))
     finaliza_conexao(conexao)
