@@ -1,7 +1,9 @@
 import tkinter as tk
 from datetime import datetime, timedelta
-#from fisica.corpos import alvo
 
+from fisica.corpos import cria_planeta, cria_foguete, cria_alvo
+from fisica.simulacao import valida_parametros
+from execucao_da_cnc import executa_na_cnc
 
 # SETAR PARAMETROS GLBOAIS
 global state
