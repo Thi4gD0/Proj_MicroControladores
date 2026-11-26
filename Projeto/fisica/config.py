@@ -57,13 +57,13 @@ PASSOS_POR_QUADROS = 10
 
 # --Comunicacao Serial-- #
 # endereco da porta do arduino
-PORTA_SERIAL = "/dev/ttyUSB0"
+PORTA_SERIAL = "COM38"
 
 # velocidade da conversa em bits por segundo
 BAUD_RATE = 9600
 
 # Liga ou desliga os teste
-MODO_TESTE = True
+MODO_TESTE = False
 
 # define a cada quantos passos do calculo da fisica 
 # um passo vai para cnc
