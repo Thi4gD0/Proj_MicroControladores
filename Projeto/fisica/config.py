@@ -75,6 +75,11 @@ INTERVALO_ENVIO = 0.3
 # tempo de espera em seg depois do primeiro ponto
 ESPERA_INICIAL = 30.0
 
+
+# --cnc-- #
+# tempo de espera em seg para a cnc terminar o homing
+ESPERA_HOMING = 30.0
+
 # calcula velocidade do fogute na orbita v = √(μ / r) 
 
 def velocidade_orbital(mi, r):

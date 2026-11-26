@@ -3,7 +3,8 @@ from serial import Serial
 from time import sleep
 from fisica.simulacao import dentro_do_limite
 from fisica.config import (LARGURA_CAIXA, ALTURA_CAIXA, PORTA_SERIAL,
-                           BAUD_RATE, MODO_TESTE, INTERVALO_ENVIO)
+                           BAUD_RATE, MODO_TESTE, INTERVALO_ENVIO,
+                           ESPERA_HOMING)
 
 
 # funcao que recebe uma posicao como (x , y) e retorna 
@@ -51,6 +52,19 @@ def envia_posicao(conexao, mensagem):
 
     conexao.write(mensagem.encode("UTF-8"))
     sleep(INTERVALO_ENVIO)
+    return True
+
+
+# funcao que realiza o homing da cnc levando para
+# o ponto definido como (0.0 ; 0.0)
+
+def inicia_homing(conexao):
+    if MODO_TESTE:
+        print("H")
+        return True
+
+    conexao.write("H\n".encode("UTF-8"))
+    sleep(ESPERA_HOMING)
     return True
 
 

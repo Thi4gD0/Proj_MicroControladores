@@ -4,7 +4,8 @@ from fisica.corpos import (planeta, alvo, cria_foguete)
 from fisica.config import (POSICAO_INICIAL, PASSOS_POR_ENVIO, ESPERA_INICIAL)
 from fisica.simulacao import (valida_parametros, passo_simulacao)
 from fisica.cnc import (inicia_conexao, posicao_para_cnc, 
-                        cria_mensagem, envia_posicao, finaliza_conexao)
+                        cria_mensagem, envia_posicao, finaliza_conexao,
+                        inicia_homing)
 
 
 # funcao que executa a simulacao e envia a trajetoria do foguete para a CNC
@@ -17,6 +18,7 @@ def executa_na_cnc(foguete, planeta, alvo):
         return erro
     
     conexao = inicia_conexao()
+    inicia_homing(conexao)
     primeiro_ponto = True
 
     for i in range(3000):
