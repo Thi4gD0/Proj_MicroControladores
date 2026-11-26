@@ -4,14 +4,16 @@ from fisica.config import (DELTA_T, ALTURA_CAIXA, LARGURA_CAIXA,
                            VELOCIDADE_GIRO, POSICAO_INICIAL,
                            COMBUSTIVEL_MAX)
 
-# calcula a aceleracao que a gravidade de um planeta gera no foguete e na posicao atual que ele esta
+# calcula a aceleracao que a gravidade de um planeta gera no foguete e 
+# na posicao atual que ele esta
 
 def aceleracao_gravitacional(foguete, planeta):
     r = foguete["posicao"] - planeta["posicao"]
     modulo_de_r = np.linalg.norm(r)
     return -planeta["mi"] * r / modulo_de_r ** 3
 
-# calcula a movimentacao do foguete, com sua velocidade e posicao, de acordo com um planeta e variacao com o tempo
+# calcula a movimentacao do foguete, com sua velocidade e posicao, 
+# de acordo com um planeta e variacao com o tempo
 
 def movimenta_foguete(foguete, planeta, dt, comando=None):
     a = aceleracao_gravitacional(foguete, planeta)
@@ -68,7 +70,8 @@ def valida_parametros(foguete, planeta, alvo):
     
     return None
 
-# aplica os comando vindos do usuario e calcula consumo de combustivel, potencia e angulo da nave
+# aplica os comando vindos do usuario e calcula consumo de combustivel, 
+# potencia e angulo da nave
 
 def aplica_comando(foguete, comando, dt):
     if "angulo" in comando:
@@ -85,7 +88,8 @@ def aplica_comando(foguete, comando, dt):
         return intensidade * direcao
     return np.array([0.0 , 0.0])
 
-# verifica o estado do foguete a cada passo: colisao, saida da caixa, alvo atingido ou sem combustivel
+# verifica o estado do foguete a cada passo: colisao, saida da caixa, 
+# alvo atingido ou sem combustivel
 
 def verifica_eventos(foguete, planeta, alvo):
     distancia_planeta = np.linalg.norm(foguete["posicao"] - planeta["posicao"])

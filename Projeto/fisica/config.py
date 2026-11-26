@@ -57,7 +57,7 @@ PASSOS_POR_QUADROS = 10
 
 # --Comunicacao Serial-- #
 # endereco da porta do arduino
-PORTA_SERIAL = "COM38"
+PORTA_SERIAL = "COM5"
 
 # velocidade da conversa em bits por segundo
 BAUD_RATE = 9600
@@ -70,21 +70,17 @@ MODO_TESTE = False
 PASSOS_POR_ENVIO = 10
 
 # tempo de espera em seg entre um ponto e outro
-INTERVALO_ENVIO = 0.3
+INTERVALO_ENVIO = 0.12
 
 # tempo de espera em seg depois do primeiro ponto
-ESPERA_INICIAL = 30.0
+ESPERA_INICIAL = 5.0
 
 
 # --cnc-- #
 # tempo de espera em seg para a cnc terminar o homing
-ESPERA_HOMING = 30.0
+ESPERA_HOMING = 10.0
 
 # calcula velocidade do fogute na orbita v = √(μ / r) 
 
 def velocidade_orbital(mi, r):
     return np.sqrt (mi / r)
-
-if __name__ == "__main__":
-    novo_mi = GRAVIDADE_PLANETA * RAIO_PLANETA ** 2 
-    print("%.2f" % velocidade_orbital(novo_mi, 100))

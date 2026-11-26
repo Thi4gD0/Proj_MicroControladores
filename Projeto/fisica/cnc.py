@@ -14,8 +14,8 @@ def posicao_para_cnc(posicao):
     if not dentro_do_limite(posicao):
         return None
 
-    x_cnc = LARGURA_CAIXA/2 - posicao[0]
-    y_cnc = ALTURA_CAIXA/2 - posicao[1] 
+    x_cnc = LARGURA_CAIXA/2 + posicao[0]
+    y_cnc = ALTURA_CAIXA/2 + posicao[1]
     return np.array([x_cnc , y_cnc])
 
 
@@ -36,7 +36,7 @@ def inicia_conexao():
         return None
     else:
         meu_serial = Serial(PORTA_SERIAL, baudrate=BAUD_RATE)
-        sleep(2)
+        sleep(5)
         return meu_serial
 
 
@@ -84,7 +84,17 @@ if __name__ == "__main__":
     print(repr(cria_mensagem(np.array([300.0 , 400.0]))))
 
     conexao = inicia_conexao()
-    posicao_cnc = posicao_para_cnc([100.0 , 0.0])
-    mensagem = cria_mensagem(posicao_cnc)
-    print(envia_posicao(conexao , "50.00;50.00\n"))
+    sleep(5)
+    inicia_homing(conexao)
+
+    pontos = [[0.0 , 0.0], [200.0 , 50.0], [100.0 , 300.0], [150.0 , 100.0],[100.0 , 50.0], [100.0 , 150.0]]
+    for ponto in pontos:
+        posicao_cnc = posicao_para_cnc(ponto)
+        if posicao_cnc is not None:
+            mensagem = cria_mensagem(posicao_cnc)
+            envia_posicao(conexao , mensagem)
+            print("enviado", repr(mensagem))
+            sleep(3)
+
+    sleep(5)
     finaliza_conexao(conexao)
